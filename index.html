@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Satwik Singh Portfolio</title>
+<meta name="description" content="Satwik Singh, cinematographer and editor in Ahmedabad: Instagram edits, films, client work and photography.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+<link rel="stylesheet" href="fonts.css">
+<script>
+  // Decide on the opening type-on intro before anything paints (home page only).
+  (function () {
+    var home = !location.hash || location.hash === '#home';
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (home && !calm) document.documentElement.classList.add('intro-run');
+  })();
+</script>
+<style>
+/* Layout: a page-for-page copy of the "Capture" Framer template: fixed nav, inset full-height
+   hero frame, centred Bebas section heads over 2-up framed 16:9 cards, CMS-style project pages,
+   About and Contact pages, and the rounded LET'S TALK card on every page. Dark by design. */
+:root {
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --surface-2: #1a1a1a;
+  --line: #262626;
+  --text: #ffffff;
+  --muted: #888888;
+  --soft: rgb(255 255 255 / .74);
+  --scrim: rgb(0 0 0 / .64);
+  --glass: rgb(10 10 10 / .5);
+
+  --font-display: "Bebas Neue", "Oswald", Impact, "Arial Narrow", sans-serif;
+  --font-body: "Satoshi", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --radius: 12px;
+  --radius-inner: 10px;
+  --radius-lg: 32px;
+  --wrap: 1200px;
+  --nav-pad: 32px;
+  --ease: cubic-bezier(.22, .7, .2, 1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+html.menu-open { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.4 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 70;
+  background: var(--bg);
+}
+img, video { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--text); color: var(--bg); }
+.wrap { max-width: var(--wrap); margin-inline: auto; }
+
+/* ---------- Intro (type-on name, as in the template) ---------- */
+.intro { display: none; }
+html.intro-run .intro, html.intro-out .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  transition: opacity .6s var(--ease);
+}
+html.intro-out .intro { opacity: 0; }
+.intro-word {
+  display: flex;
+  transform: translateX(-14%);
+  font: 400 clamp(64px, 10.6vw, 152px)/.9 var(--font-display);
+}
+.intro-word span {
+  opacity: 0;
+  background: linear-gradient(180deg, var(--text) 35%, #6c6c6c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: type-in .45s var(--ease) forwards;
+  animation-delay: calc(var(--i) * 95ms + 120ms);
+}
+@keyframes type-in { from { opacity: 0; transform: translateY(.06em); } to { opacity: 1; transform: none; } }
+.nav, .hero-copy, .hero-scroll { transition: opacity .8s var(--ease); }
+html.intro-run .nav, html.intro-run .hero-copy, html.intro-run .hero-scroll { opacity: 0; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) max(var(--nav-pad), env(safe-area-inset-right, 0px)) 8px max(var(--nav-pad), env(safe-area-inset-left, 0px));
+}
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -32px;
+  z-index: -1;
+  background: linear-gradient(to bottom, rgb(10 10 10 / .82), rgb(10 10 10 / 0));
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+.nav.is-scrolled::before { opacity: 1; }
+.logo {
+  position: relative;
+  z-index: 2;
+  margin-right: auto;
+  padding: 10px 0;
+  font: 400 24px/1 var(--font-display);
+  letter-spacing: .02em;
+}
+.nav-links {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0 4px 0 0;
+  list-style: none;
+}
+.nav-links a { display: block; padding: 12px 0; font-size: 14px; }
+.nav-links a[aria-current="page"] { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+.menu-btn {
+  position: relative;
+  z-index: 2;
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.menu-btn span {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  height: 1.5px;
+  background: var(--text);
+  transition: transform .3s var(--ease);
+}
+.menu-btn span:first-child { top: 18px; }
+.menu-btn span:last-child { top: 25px; }
+.nav.is-open .menu-btn span:first-child { transform: translateY(3.5px) rotate(45deg); }
+.nav.is-open .menu-btn span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+
+/* Sound toggle: the bars stand up when sound is on and dance while something is audible */
+.sound-btn {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sound-btn::before {
+  content: "";
+  position: absolute;
+  inset: 4px -12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / .14);
+  opacity: 0;
+  pointer-events: none;
+}
+.sound-btn.is-asking::before { animation: ask 1.2s var(--ease) 2; }
+@keyframes ask { 50% { opacity: 1; } }
+.eq { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+.eq i {
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: currentColor;
+  transform: scaleY(.18);
+  transform-origin: bottom;
+  transition: transform .3s var(--ease);
+}
+.sound-btn[aria-pressed="true"] .eq i { transform: scaleY(var(--h)); }
+.sound-btn.is-live .eq i { animation: eq .6s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -.17s); }
+@keyframes eq { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
+
+/* ---------- Hero ---------- */
+.hero { padding-block: 16px; }
+.hero-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: calc(100vh - 32px);
+  height: calc(100svh - 32px);
+  min-height: 560px;
+  max-height: 1100px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--bg);
+  isolation: isolate;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-frame::after { content: ""; position: absolute; inset: 0; z-index: -1; background: rgb(0 0 0 / .46); }
+.hero-copy { display: grid; justify-items: center; gap: 20px; padding: 96px 24px; text-align: center; }
+.hero-name {
+  margin: 0;
+  font: 400 clamp(64px, 10.6vw, 152px)/.9 var(--font-display);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.hero-tag { margin: 0; max-width: 420px; font-size: 18px; line-height: 1.4; text-wrap: balance; }
+.hero-scroll {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  translate: -50% 0;
+  padding: 8px 12px;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ---------- Sections ---------- */
+.section { padding-block: clamp(96px, 11vw, 160px) 0; }
+.sec-title {
+  margin: 0 0 clamp(40px, 4.4vw, 64px);
+  text-align: center;
+  font: 400 clamp(44px, 4.1vw, 58px)/.9 var(--font-display);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.more-link { display: flex; justify-content: center; margin-top: 48px; }
+.more-link a {
+  display: inline-flex;
+  gap: 6px;
+  padding: 8px 2px;
+  font-size: 16px;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
+}
+.more-link a:hover { border-color: currentColor; }
+.lede {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.frame { margin: 0; padding: 8px; border-radius: var(--radius); background: var(--surface); }
+.frame > img, .frame > video {
+  width: 100%;
+  aspect-ratio: var(--ar, 16 / 9);
+  object-fit: cover;
+  border-radius: var(--radius-inner);
+  background: var(--surface-2);
+}
+.frame.is-contain > img, .frame.is-contain > video { object-fit: contain; background: #000; }
+.frame.is-shaped { width: 100%; margin-inline: auto; }
+.frame figcaption { padding: 10px 6px 2px; font-size: 14px; color: var(--muted); }
+.about-media { max-width: 1000px; margin: 64px auto 0; }
+
+/* Cards */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { position: relative; display: block; padding: 8px; border-radius: var(--radius); background: var(--surface); }
+.card.is-wide { grid-column: 1 / -1; }
+.card-media {
+  position: relative;
+  display: block;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-inner);
+  background: var(--surface-2);
+}
+.card.is-wide .card-media { aspect-ratio: 21 / 9; }
+.card-media img, .card-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .9s var(--ease), opacity .4s;
+}
+.card-media video { opacity: 0; }
+.card.is-playing .card-media video { opacity: 1; }
+.card:hover .card-media img, .card:hover .card-media video,
+.card:focus-visible .card-media img, .card:focus-visible .card-media video { transform: scale(1.03); }
+.card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--scrim), transparent 48%);
+  pointer-events: none;
+}
+.card-info {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 16px;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.card-title { display: block; font-size: 20px; font-weight: 500; line-height: 1.3; }
+.card-cat { display: block; font-size: 16px; color: var(--soft); }
+.card-year { font-size: 16px; color: var(--soft); white-space: nowrap; }
+.card-view {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 1;
+  font-size: 16px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.card:hover .card-view, .card:focus-visible .card-view { opacity: 1; transform: none; }
+.more-list { display: grid; gap: 16px; max-width: 784px; margin-inline: auto; }
+
+/* Clients */
+.clients { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.client {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+  transition: background-color .25s;
+}
+.client:hover { background: var(--surface-2); }
+.client span {
+  font: 400 clamp(26px, 2.6vw, 34px)/1 var(--font-display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #7d7d7d;
+  transition: color .25s;
+}
+.client:hover span, .client:focus-visible span { color: var(--text); }
+
+/* ---------- Project, list, About and Contact pages ---------- */
+.page-top { padding-top: clamp(124px, 12.5vw, 176px); }
+.page-title {
+  margin: 0;
+  text-align: center;
+  font: 400 clamp(64px, 10.6vw, 152px)/.9 var(--font-display);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.page-desc {
+  max-width: 640px;
+  margin: 32px auto 0;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.details {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 864px;
+  margin: 48px auto 0;
+}
+.detail { padding: 4px; border-radius: var(--radius); background: var(--surface); }
+.detail div {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 24px 12px;
+  border-radius: var(--radius-inner);
+  background: var(--bg);
+  text-align: center;
+}
+.detail dt { font-size: 20px; font-weight: 500; }
+.detail dd { margin: 0; font-size: 18px; color: var(--muted); }
+.media { display: grid; gap: 16px; max-width: 864px; margin: 64px auto 0; }
+.media-row { display: grid; gap: 16px; }
+.media-row.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media-row.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.media-row.is-single { max-width: 560px; width: 100%; margin-inline: auto; }
+.media-row.is-single .frame > img { aspect-ratio: auto; }
+.page-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-pill:hover { opacity: .88; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 16px;
+  transition: background-color .2s;
+}
+.pill:hover { background: var(--surface-2); }
+.tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 40px 0 48px; }
+.tab {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 15px;
+  color: var(--muted);
+  transition: color .2s, background-color .2s;
+}
+.tab:hover { color: var(--text); }
+.tab[aria-current="true"] { border-color: var(--text); background: var(--text); color: var(--bg); }
+.tab b { margin-left: 6px; font-weight: 500; opacity: .6; }
+.about-photo { max-width: 864px; margin: 48px auto 0; }
+.about-photo > img { --ar: 864 / 516; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 864px;
+  margin: 16px auto 0;
+}
+.stat { padding: 4px; border-radius: var(--radius); background: var(--surface); }
+.stat div { display: grid; gap: 6px; padding: 28px 12px; border-radius: var(--radius-inner); background: var(--bg); text-align: center; }
+.stat b { font: 400 clamp(40px, 4vw, 54px)/1 var(--font-display); }
+.stat span { font-size: 16px; color: var(--muted); }
+.services { display: grid; max-width: 864px; margin: 0 auto; padding: 0; list-style: none; }
+.service {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 4px 16px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+}
+.service:last-child { border-bottom: 1px solid var(--line); }
+.service i { font: 400 32px/1 var(--font-display); font-style: normal; color: var(--muted); }
+.service h3 { margin: 0; font-size: 24px; font-weight: 500; line-height: 1.25; }
+.service p { grid-column: 2; margin: 6px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.5; color: var(--muted); }
+.eyebrow-display {
+  margin: 0 0 12px;
+  text-align: center;
+  font: 400 clamp(22px, 2.2vw, 28px)/1 var(--font-display);
+  letter-spacing: .02em;
+  color: var(--muted);
+}
+.contact-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 40px; }
+.form-card { max-width: 840px; margin: 64px auto 0; padding: 16px; border-radius: 24px; background: var(--surface); }
+.form-card form { display: grid; gap: 18px; padding: clamp(18px, 3vw, 32px); border-radius: 16px; background: var(--bg); }
+.form-card h2 { margin: 0; font: 400 clamp(34px, 3.4vw, 44px)/1 var(--font-display); text-transform: uppercase; }
+.field { display: grid; gap: 8px; }
+.field label { font-size: 15px; color: var(--muted); }
+.field input, .field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: 400 16px/1.4 var(--font-body);
+}
+.field input::placeholder, .field textarea::placeholder { color: #5f5f5f; }
+.field textarea { min-height: 150px; resize: vertical; }
+.form-note { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.form-done { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.form-done p { margin: 0; line-height: 1.5; }
+.form-done textarea { min-height: 120px; }
+.form-done .row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ---------- LET'S TALK card + footer (every page) ---------- */
+.talk { padding-block: clamp(96px, 11vw, 160px) 0; }
+.talk-card {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px) clamp(32px, 4vw, 48px);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: center;
+}
+.talk-title {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  font: 400 clamp(84px, 14vw, 200px)/.86 var(--font-display);
+  text-transform: uppercase;
+}
+.talk-title span { display: inline-block; white-space: pre; }
+.talk-title.play span { animation: rise .9s var(--ease) both; animation-delay: calc(var(--i) * 45ms); }
+@keyframes rise { from { transform: translateY(102%); } }
+.talk-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  margin-top: clamp(28px, 4vw, 44px);
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+.talk-row > :last-child { text-align: right; }
+.talk-row .big { font-size: 18px; }
+.talk-row a.big:hover { text-decoration: underline; text-underline-offset: 4px; }
+.socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; font-size: 16px; }
+.socials a { transition: opacity .2s; }
+.socials a:hover { opacity: .7; }
+.where { margin: 0; color: var(--muted); }
+.where span { color: var(--text); font-variant-numeric: tabular-nums; }
+.site-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-block: 24px calc(32px + env(safe-area-inset-bottom, 0px));
+  font-size: 14px;
+  color: var(--muted);
+}
+.site-foot nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.site-foot a:hover { color: var(--text); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 809px) {
+  :root { --nav-pad: 16px; }
+  .menu-btn { display: block; }
+  .nav-links {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 96px 24px;
+    background: var(--bg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s var(--ease), visibility .3s;
+  }
+  .nav.is-open .nav-links { opacity: 1; visibility: visible; }
+  .nav-links a { padding: 6px 16px; font: 400 56px/1 var(--font-display); text-transform: uppercase; }
+  .nav-links a[aria-current="page"] { text-decoration: none; color: var(--muted); }
+  .grid { grid-template-columns: 1fr; }
+  .card.is-wide .card-media { aspect-ratio: 16 / 9; }
+  .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .client { min-height: 132px; }
+  .talk-row { grid-template-columns: 1fr; text-align: center; }
+  .talk-row > :last-child { text-align: center; }
+  .media-row.cols-3 { grid-template-columns: 1fr; max-width: 420px; width: 100%; margin-inline: auto; }
+}
+@media (max-width: 560px) {
+  .media-row.cols-2 { grid-template-columns: 1fr; }
+  .card-info { left: 14px; right: 14px; bottom: 12px; }
+  .card-title { font-size: 17px; }
+  .card-cat, .card-year { font-size: 14px; }
+  .lede { font-size: 18px; }
+  .service { grid-template-columns: 44px minmax(0, 1fr); }
+  .service h3 { font-size: 21px; }
+}
+@media (hover: none) {
+  .card-view { opacity: 1; transform: none; }
+  .sound-btn { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0a'/%3E%3Ctext x='32' y='47' font-family='Impact,Arial Narrow,sans-serif' font-size='42' text-anchor='middle' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://uv09.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Satwik Singh, cinematographer and editor">
+<meta property="og:description" content="Instagram edits, films, client work and photography from Ahmedabad.">
+<meta property="og:url" content="https://uv09.github.io/">
+<meta property="og:image" content="https://uv09.github.io/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-word"><span style="--i:0">S</span><span style="--i:1">A</span><span style="--i:2">T</span><span style="--i:3">W</span><span style="--i:4">I</span><span style="--i:5">K</span></div>
+</div>
+
+<header class="nav" id="nav">
+  <a class="logo" href="#home">Satwik Singh</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#photos" data-nav="photos">Photos</a></li>
+    <li><a href="#videos" data-nav="videos">Videos</a></li>
+    <li><a href="#about" data-nav="about">About</a></li>
+    <li><a href="#contact" data-nav="contact">Contact</a></li>
+  </ul>
+  <button class="sound-btn" id="sound-btn" type="button" aria-pressed="false"><span class="eq" aria-hidden="true"><i style="--h:.55;--i:0"></i><i style="--h:.9;--i:1"></i><i style="--h:.4;--i:2"></i><i style="--h:.75;--i:3"></i></span><span id="sound-label">Click for sound</span></button>
+  <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu"><span></span><span></span></button>
+</header>
+
+<main id="app"></main>
+
+<footer class="talk">
+  <div class="talk-card">
+    <h2 class="talk-title" id="talk-title" aria-label="Let's talk"><span aria-hidden="true" style="--i:0">L</span><span aria-hidden="true" style="--i:1">E</span><span aria-hidden="true" style="--i:2">T</span><span aria-hidden="true" style="--i:3">'</span><span aria-hidden="true" style="--i:4">S</span><span aria-hidden="true" style="--i:5"> </span><span aria-hidden="true" style="--i:6">T</span><span aria-hidden="true" style="--i:7">A</span><span aria-hidden="true" style="--i:8">L</span><span aria-hidden="true" style="--i:9">K</span></h2>
+    <div class="talk-row">
+      <a class="big" href="https://www.behance.net/SatwikSingh0657" target="_blank" rel="noopener">Hire me on Behance ↗</a>
+      <nav class="socials" aria-label="Social profiles">
+        <a href="https://www.instagram.com/_._yuvraj._/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/in/satwik-singh-73153822a" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://www.behance.net/SatwikSingh0657" target="_blank" rel="noopener">Behance</a>
+      </nav>
+      <p class="where big">Ahmedabad · <span id="lt">IST</span></p>
+    </div>
+  </div>
+  <div class="site-foot">
+    <nav aria-label="Footer">
+      <a href="#home">Home</a><a href="#photos">Photos</a><a href="#videos">Videos</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <span>© 2026 Satwik Singh · Layout after Capture by Thaer Swailem</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const BEHANCE = 'https://www.behance.net/SatwikSingh0657';
+  const INSTAGRAM = 'https://www.instagram.com/_._yuvraj._/';
+  const LINKEDIN = 'https://www.linkedin.com/in/satwik-singh-73153822a';
+  const reel = code => `https://www.instagram.com/reel/${code}/`;
+  const pic = (file, alt) => ({ src: 'images/' + file, alt });
+  const clip = (file, poster, alt, cap, fit) => ({ video: 'videos/' + file, poster: 'images/' + poster, alt, cap, fit });
+
+  const VIDEOS = [
+    { slug: 'mica-studio-7', seg: 'edits', title: 'MICA Studio 7', cat: 'Music edit', client: 'Personal project', loc: 'MICA, Ahmedabad', year: '2026',
+      desc: "A music edit cut to trending audio, from a night at MICA's Studio 7 under purple and gold string lights.",
+      poster: pic('reel-Dd-ABAqob0o.jpg', 'Crowd under purple and gold string lights at a MICA Studio 7 night gig'),
+      file: 'reel-mica-studio-7.mp4', ar: '4 / 3', ig: reel('Dd-ABAqob0o') },
+    { slug: 'bit-of-everything', seg: 'edits', title: 'Bit of Everything?', cat: 'Travel edit', client: 'Personal project', loc: 'Mumbai', year: '2026',
+      desc: 'A travel montage set to trending audio, stitched together from moments in Mumbai.',
+      poster: pic('reel-DdmSxv0okeQ.jpg', 'Opening frame of a travel edit: sails, flags and open sky'), file: 'reel-bit-of-everything.mp4', ig: reel('DdmSxv0okeQ') },
+    { slug: 'say-it-with-bla-bli-blu', seg: 'edits', title: 'Say It With Bla Bli Blu', cat: 'Product reel', client: 'Bla Bli Blu (case competition)', loc: 'India', year: '2026',
+      desc: 'A product reel for the perfume brand Bla Bli Blu, made for an MBA case competition.',
+      poster: pic('reel-DcoNA8No9E_.jpg', 'Bla Bli Blu perfume bottle with the line Love is Bla Bli Blu'), pos: '50% 62%', file: 'reel-bla-bli-blu.mp4', ar: '9 / 16', ig: reel('DcoNA8No9E_') },
+    { slug: 'recreate-this-with-your-group', seg: 'edits', title: 'Recreate This With Your Group', cat: 'Trend edit', client: 'Personal project', loc: 'MICA, Ahmedabad', year: '2026',
+      desc: 'A group trend edit with friends at MICA, set to the song Aarzu.',
+      poster: pic('reel-DcnkXqhKV0-.jpg', 'Friends together outdoors for a group trend reel'), file: 'reel-recreate.mp4', ig: reel('DcnkXqhKV0-') },
+    { slug: 'ishq-hai-priya-malik', seg: 'edits', title: 'Ishq Hai · Priya Malik', cat: 'Tour promo', client: 'Priya Malik', loc: 'Mumbai & Pune', year: '2026',
+      desc: "A promo reel for Priya Malik's Ishq Hai shows in Mumbai and Pune, posted as a collab on her Instagram.",
+      poster: pic('reel-Dciw69LyWLb.jpg', 'Ishq Hai by Priya Malik tour artwork'), file: 'reel-ishq-hai.mp4', ar: '9 / 16', ig: reel('Dciw69LyWLb') },
+    { slug: 'onashamsakal', seg: 'edits', title: 'Onashamsakal', cat: 'Festival edit', client: 'Personal project', loc: 'MICA, Ahmedabad', year: '2026',
+      desc: 'An Onam celebration edit with friends on campus.',
+      poster: pic('reel-DcZJ1dXIDgS.jpg', 'Two friends in festive Onam outfits on campus'), file: 'reel-onashamsakal.mp4', ar: '4 / 3', ig: reel('DcZJ1dXIDgS') },
+    { slug: 'mai-mica-chale-jaonga', seg: 'edits', title: 'Mai MICA Chale Jaonga', cat: 'Campus reel', client: 'Personal project', loc: 'MICA, Ahmedabad', year: '2026',
+      desc: 'A campus reel about making it to MICA, cut for sound-on viewing.',
+      poster: pic('reel-Dbu1eI9oB1_.jpg', 'Group selfie of new MICA students'), file: 'reel-mai-mica.mp4', ig: reel('Dbu1eI9oB1_') },
+    { slug: 'packing-for-mica', seg: 'edits', title: 'Packing for MICA', cat: 'Cinematic edit', client: 'Personal project', loc: 'India', year: '2026',
+      desc: 'A cinematic edit about packing up for MICA and the start of college life.',
+      poster: pic('reel-DaXxnOGITfO.jpg', 'Suitcase packed with T-shirts, shot from above'), file: 'reel-packing-for-mica.mp4', ig: reel('DaXxnOGITfO') },
+    { slug: 'meet-the-class', seg: 'films', title: 'Meet the Class', cat: 'Video portrait', client: 'MICA (CCE-1 batch)', loc: 'MICA, Ahmedabad', year: '2026',
+      desc: '“Meet the Class” is a dynamic, fast-paced video portrait introducing the CCE-1 (2026–2027) batch at MICA. The goal was to capture the diverse, multifaceted personalities of my cohort in a single, cohesive visual narrative. Rather than a standard introduction, I wanted to create a rhythmic, engaging piece that highlights the individuality of each student while celebrating our collective identity as a class.',
+      poster: pic('cover-mica.jpg', 'MICA CCE-1 title card over a crowd of students'), preview: 'videos/meet-the-class.mp4',
+      link: 'https://www.behance.net/gallery/255738609/MICA-CCE-1-INTRO-VIDEO', linkLabel: 'View on Behance',
+      media: [clip('meet-the-class.mp4', 'poster-meet-the-class.jpg', 'Meet the Class, the CCE-1 intro film', 'Shot on a Sony ZV-E10 · edited and graded in DaVinci Resolve · 0:46'),
+              pic('cover-mica.jpg', 'MICA CCE-1 title card over a crowd of students')] },
+    { slug: 'cinematography-and-editing', seg: 'films', title: 'Cinematography & Editing', cat: 'Cinematography reel', client: 'Personal project', loc: 'India', year: '2025',
+      desc: 'Seven short pieces, shot and cut by me: night skylines and heritage architecture in black and white, festival fireworks, a sunset drive, a ride through the woods, a vertical event cut and a concert with flame cannons.',
+      poster: pic('poster-clip-07-pyro.jpg', 'Concert crowd with hands up as flame cannons fire on stage'), preview: 'videos/clip-07-pyro.mp4',
+      link: 'https://www.behance.net/gallery/218542445/Cinematography-and-Editing', linkLabel: 'View on Behance',
+      media: [
+        clip('clip-01-skyline.mp4', 'poster-clip-01-skyline.jpg', 'Black-and-white city skyline at night across the water', 'Clip 01 · 0:16'),
+        clip('clip-02-dome.mp4', 'poster-clip-02-dome.jpg', 'Black-and-white heritage building with a central dome', 'Clip 02 · 0:02'),
+        clip('clip-03-fireworks.mp4', 'poster-clip-03-fireworks.jpg', 'Fireworks bursting in a dark sky', 'Clip 03 · 0:47'),
+        clip('clip-04-sunset.mp4', 'poster-clip-04-sunset.jpg', 'Orange sunset sky past a car side mirror', 'Clip 04 · 0:15 · 4:3', 'contain'),
+        clip('clip-05-woods.mp4', 'poster-clip-05-woods.jpg', 'Scooter rider on a road through green woods', 'Clip 05 · 0:48'),
+        clip('clip-06-vertical.mp4', 'poster-clip-06-vertical.jpg', 'Two women cheering at an evening event, vertical frame', 'Clip 06 · 1:06 · 9:16', 'contain'),
+        clip('clip-07-pyro.mp4', 'poster-clip-07-pyro.jpg', 'Concert crowd with hands up as flame cannons fire', 'Clip 07 · 0:07'),
+      ] },
+  ];
+  // Each Instagram edit plays its reel as the card preview and on its project page
+  VIDEOS.forEach(v => {
+    if (!v.file) return;
+    v.preview = 'videos/' + v.file;
+    v.media = [{ video: v.preview, poster: v.poster.src, alt: `${v.title}, ${v.cat.toLowerCase()}`, ar: v.ar }];
+  });
+
+  const PHOTOS = [
+    { slug: 'priya-maliks-ahmedabad-show', seg: 'client', title: "Priya Malik's Ahmedabad Show", cat: 'Live performance', client: 'Priya Malik', loc: 'Ahmedabad', year: '2026',
+      desc: 'Visual coverage of acclaimed storyteller and spoken-word poet Priya Malik during her live performance in Ahmedabad. The show centred on love, nostalgia and resilience, and my aim was to translate the raw emotion of her spoken word into visual storytelling: her expressive delivery under warm stage lighting, and the rapt attention of the audience.',
+      poster: pic('card-priya.jpg', "A performer whirling on stage at Priya Malik's Ahmedabad show"),
+      link: 'https://www.behance.net/gallery/255749521/Priya-Maliks-Ahmedabad-Show',
+      rows: [['16 / 9', pic('card-priya.jpg', "A performer whirling on stage at Priya Malik's Ahmedabad show")],
+             ['4 / 5', pic('priya-1.jpg', 'Frames from the show: red curtains and the stage'), pic('priya-2.jpg', 'A performer whirling, and the ensemble facing a spotlit audience')],
+             ['4 / 5', pic('priya-3.jpg', 'The ensemble performing for a full hall'), pic('priya-4.jpg', 'Priya Malik at the microphone under blue and warm light')],
+             ['16 / 9', pic('hero-stage.jpg', 'Performers on stage seen from behind, facing a spotlit audience')]] },
+    { slug: 'jai-singh-pune-tour', seg: 'client', title: 'Jai Singh Pune Tour', cat: 'Tour photography', client: 'Jai Singh', loc: 'Pune', year: '2025',
+      desc: "Stage photography from Jai Singh's Pune tour, shot on a Canon EOS 80D and finished in Lightroom and Photoshop.",
+      poster: pic('cover-jai.jpg', 'Jai Singh performing on a dark stage in Pune'),
+      link: 'https://www.behance.net/gallery/227169831/Jai-Singh-Pune-Tour',
+      rows: [['16 / 9', pic('cover-jai.jpg', 'Jai Singh performing on a dark stage in Pune')],
+             ['natural', pic('jai-1.jpg', 'Black-and-white collage of Jai Singh performing in Pune')]] },
+    { slug: 'ashish-bagrecha-pune-tour', seg: 'client', title: 'Ashish Bagrecha Pune Tour', cat: 'Event photography', client: 'Ashish Bagrecha', loc: 'Pune', year: '2025',
+      desc: "Event coverage from Ashish Bagrecha's Pune tour, shot on a Canon EOS 80D and retouched in Lightroom.",
+      poster: pic('cover-ashish.jpg', 'Ashish Bagrecha on stage, black-and-white tour artwork'),
+      link: 'https://www.behance.net/gallery/227168853/Ashish-Bagrecha-Pune-Tour',
+      rows: [['16 / 9', pic('cover-ashish.jpg', 'Ashish Bagrecha on stage, black-and-white tour artwork')],
+             ['natural', pic('ashish-1.jpg', 'Ashish Bagrecha Pune Tour poster with a stage photograph')]] },
+    { slug: 'brand-shoot', seg: 'client', title: 'Brand Shoot', cat: 'Advertising photography', client: 'Brand client', loc: 'India', year: '2025',
+      desc: 'A model photoshoot for brand promotion, shot as black-and-white portraits and edited in Lightroom.',
+      poster: pic('cover-brand.jpg', 'Black-and-white model portraits from a brand shoot'),
+      link: 'https://www.behance.net/gallery/227168073/Brand-Shoot',
+      rows: [['16 / 9', pic('cover-brand.jpg', 'Black-and-white model portraits from a brand shoot')],
+             ['9 / 16', pic('brand-1.jpg', 'Black-and-white portrait layout, frame 1'), pic('brand-2.jpg', 'Black-and-white portrait layout, frame 2'), pic('brand-3.jpg', 'Black-and-white portrait layout, frame 3')]] },
+    { slug: 'harsh-gujral', seg: 'client', title: 'Harsh Gujral', cat: 'Live comedy', client: 'Harsh Gujral', loc: 'India', year: '2025',
+      desc: "Photographs from Harsh Gujral's live set, shot on Canon and edited in Lightroom.",
+      poster: pic('cover-harsh.jpg', 'Harsh Gujral on stage under purple light'),
+      link: 'https://www.behance.net/gallery/218543863/Harsh-Gujral',
+      rows: [['16 / 9', pic('cover-harsh.jpg', 'Harsh Gujral on stage under purple light')],
+             ['1 / 1', pic('harsh-1.jpg', 'Harsh Gujral under purple light, with title artwork'), pic('harsh-2.jpg', 'Harsh Gujral mid-set, arm raised'), pic('harsh-3.jpg', 'Harsh Gujral gesturing to the crowd')]] },
+    { slug: 'samay-raina', seg: 'client', title: 'Samay Raina', cat: 'Live show', client: 'Samay Raina', loc: 'India', year: '2025',
+      desc: 'Gig photography from a Samay Raina live show, with the frames laid out as poster designs.',
+      poster: pic('cover-samay.jpg', 'Samay Raina in a red check shirt against a blue backdrop'),
+      link: 'https://www.behance.net/gallery/218540949/Samay-Raina',
+      rows: [['16 / 9', pic('cover-samay.jpg', 'Samay Raina in a red check shirt against a blue backdrop')],
+             ['4 / 5', pic('samay-1.jpg', 'Samay Raina on stage, poster layout 1'), pic('samay-2.jpg', 'Samay Raina on stage, poster layout 2')],
+             ['4 / 5', pic('samay-3.jpg', 'Samay Raina at the microphone, poster layout 3'), pic('samay-4.jpg', 'Wide shot of Samay Raina on stage, poster layout 4')]] },
+    { slug: 'postcards-from-shimla', seg: 'personal', title: 'Postcards from Shimla', cat: 'Travel series', client: 'Personal project', loc: 'Shimla, Himachal Pradesh', year: '2026',
+      desc: 'A personal series of postcards from the mist-covered hills of Himachal Pradesh, shot on iPhone 17. From the colonial echoes of The Ridge to the toy train through pine-scented valleys, each frame tries to hold the crisp winter air, golden sunsets and street poetry of the town. 200+ raw shots became 25 final postcards.',
+      poster: pic('shimla-feature.jpg', 'Sunlit forest road in Shimla with the title Postcards from Shimla'),
+      link: 'https://www.behance.net/gallery/244232417/Postcards-from-Shimla',
+      rows: [['16 / 9', pic('shimla-feature.jpg', 'Sunlit forest road in Shimla with the title Postcards from Shimla')],
+             ['3 / 2', pic('shimla-2.jpg', 'Postcard 2 from Shimla'), pic('shimla-3.jpg', 'Postcard 3 from Shimla')],
+             ['3 / 2', pic('shimla-4.jpg', 'Postcard 4 from Shimla'), pic('shimla-5.jpg', 'Postcard 5 from Shimla')],
+             ['16 / 9', pic('shimla-6.jpg', 'Postcard 6 from Shimla')],
+             ['3 / 2', pic('shimla-7.jpg', 'Postcard 7 from Shimla'), pic('shimla-8.jpg', 'Postcard 8 from Shimla')],
+             ['3 / 2', pic('shimla-9.jpg', 'Postcard 9 from Shimla'), pic('shimla-10.jpg', 'Postcard 10 from Shimla')],
+             ['16 / 9', pic('shimla-11.jpg', 'Postcard 11 from Shimla')]] },
+    { slug: 'beyond-the-beaches', seg: 'personal', title: 'Beyond the Beaches', cat: 'Travel photography', client: 'Personal project', loc: 'India', year: '2025',
+      desc: 'A travel set that looks past the shoreline, at the colour, streets and houses inland.',
+      poster: pic('cover-beaches.jpg', 'Colourful heritage houses and street scenes'),
+      link: 'https://www.behance.net/gallery/218545535/Beyond-the-Beaches',
+      rows: [['16 / 9', pic('cover-beaches.jpg', 'Colourful heritage houses and street scenes')],
+             ['1 / 1', pic('beaches-1.jpg', 'Collage of colourful heritage houses'), pic('beaches-2.jpg', 'Collage of street details and painted walls')]] },
+    { slug: 'capturing-the-elegance-in-the-wild', seg: 'personal', title: 'Capturing the Elegance in the Wild', cat: 'Wildlife photography', client: 'Personal project', loc: 'Bhigwan, Maharashtra', year: '2025',
+      desc: 'A wildlife project documenting the beauty, behaviour and habitat of flamingos in their natural environment: their striking pink plumage, graceful movement and social dynamics, and the challenges they face from environmental change and human activity.',
+      poster: pic('cover-flamingo.jpg', 'Flamingos wading at Bhigwan, titled Bhigwan 2025'),
+      link: 'https://www.behance.net/gallery/218538771/Capturing-the-Elegance-in-the-wild',
+      rows: [['16 / 9', pic('cover-flamingo.jpg', 'Flamingos wading at Bhigwan, titled Bhigwan 2025')],
+             ['4 / 5', pic('flamingo-1.jpg', 'Flamingos in shallow water, titled Bhigwan 2025'), pic('flamingo-2.jpg', 'Collage of wading birds at the wetland'), pic('flamingo-3.jpg', 'A flock of flamingos on still water')]] },
+  ];
+
+  const ABOUT = "I'm Satwik, a cinematographer and editor based in Ahmedabad. I photograph and film live shows for comedians and poets, shoot for brands, and cut short-form edits for Instagram that lean on rhythm and sound. I'm currently in the CCE-1 batch at MICA, and a background in media planning at Dentsu means I think about who's watching as much as what's in the frame.";
+  const SERVICES = [
+    ['Live show coverage', 'Photo and video coverage of live performances, comedy tours and concerts, from wide venue shots to tight, emotive close-ups.'],
+    ['Instagram reels', 'Short-form edits cut for sound-on viewing: campus stories, trend edits, tour promos and product spots.'],
+    ['Brand and product shoots', 'Model and product shoots for brand promotion, planned with the feed and the campaign in mind.'],
+    ['Video editing and colour grading', 'Editing and grading in DaVinci Resolve and Premiere Pro, from fast-paced intro films to cinematic travel cuts.'],
+    ['Photo editing and retouching', "Lightroom and Photoshop retouching, plus poster-style layouts for artists' socials."],
+    ['Travel and wildlife photography', 'Personal series like Postcards from Shimla and the Bhigwan flamingos, shot on everything from a Canon 80D to an iPhone 17.'],
+  ];
+  const CLIENTS = [['Priya Malik', 'p-priya-maliks-ahmedabad-show'], ['Samay Raina', 'p-samay-raina'], ['Harsh Gujral', 'p-harsh-gujral'],
+                   ['Jai Singh', 'p-jai-singh-pune-tour'], ['Ashish Bagrecha', 'p-ashish-bagrecha-pune-tour'], ['MICA', 'v-meet-the-class']];
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  const app = document.getElementById('app');
+
+  // ---------- Building blocks ----------
+  function card(item, kind, wide) {
+    const href = `#${kind === 'video' ? 'v' : 'p'}-${item.slug}`;
+    const pos = item.pos ? ` style="object-position:${item.pos}"` : '';
+    return `<a class="card${wide ? ' is-wide' : ''}" href="${href}"${item.preview ? ` data-preview="${item.preview}"` : ''}>
+      <span class="card-media">
+        <img src="${item.poster.src}" alt="${esc(item.poster.alt)}" loading="lazy"${pos}>
+        <span class="card-view">View ↗</span>
+        <span class="card-info"><span><span class="card-title">${esc(item.title)}</span><span class="card-cat">${esc(item.cat)}</span></span><span class="card-year">${item.year}</span></span>
+      </span>
+    </a>`;
+  }
+
+  function cardSection(title, items, kind, more, firstWide) {
+    const link = more ? `<div class="more-link"><a href="${more[0]}">${more[1]} <span aria-hidden="true">↗</span></a></div>` : '';
+    return `<section class="section"><div class="wrap">
+      <h2 class="sec-title">${title}</h2>
+      <div class="grid">${items.map((it, i) => card(it, kind, firstWide && i === 0)).join('')}</div>${link}
+    </div></section>`;
+  }
+
+  function videoFrame(m) {
+    const cap = m.cap ? `<figcaption>${esc(m.cap)}</figcaption>` : '';
+    // Reels keep their own shape: 9:16 in a phone-width frame, 4:3 a little narrower than 16:9
+    const [w, h] = (m.ar || '16 / 9').split('/').map(Number);
+    const shape = m.ar ? ` style="--ar:${m.ar};max-width:${w < h ? 400 : 700}px"` : '';
+    const cls = (m.fit === 'contain' ? ' is-contain' : '') + (m.ar ? ' is-shaped' : '');
+    return `<figure class="frame${cls}"${shape}><video src="${m.video}" poster="${m.poster}" controls muted loop playsinline preload="none" aria-label="${esc(m.alt)}" data-autoplay></video>${cap}</figure>`;
+  }
+  const imageFrame = (m, ar) => `<figure class="frame"><img src="${m.src}" alt="${esc(m.alt)}" loading="lazy" style="--ar:${ar || '16 / 9'}"></figure>`;
+
+  function details(it) {
+    return `<dl class="details">${[['Category', it.cat], ['Client', it.client], ['Location', it.loc], ['Year', it.year]]
+      .map(([k, v]) => `<div class="detail"><div><dt>${k}</dt><dd>${esc(v)}</dd></div></div>`).join('')}</dl>`;
+  }
+
+  function related(list, cur) {
+    const same = list.filter(i => i !== cur && i.seg === cur.seg);
+    const rest = list.filter(i => i !== cur && i.seg !== cur.seg);
+    return same.concat(rest).slice(0, 4);
+  }
+
+  function moreSection(title, items, kind, href, label) {
+    return `<section class="section"><div class="wrap">
+      <h2 class="sec-title">${title}</h2>
+      <div class="more-list">${items.map(i => card(i, kind)).join('')}</div>
+      <div class="more-link"><a href="${href}">${label} <span aria-hidden="true">↗</span></a></div>
+    </div></section>`;
+  }
+
+  // ---------- Pages ----------
+  function Home() {
+    const edits = VIDEOS.filter(v => v.seg === 'edits');
+    return `
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-frame">
+        <video class="hero-video" src="videos/hero-loop.mp4" poster="images/poster-hero.jpg" muted loop playsinline preload="auto" aria-hidden="true" data-hero></video>
+        <div class="hero-copy">
+          <h1 class="hero-name">Satwik Singh</h1>
+          <p class="hero-tag">I'm a cinematographer and editor who films live shows, brand shoots and the reels in between.</p>
+        </div>
+        <button class="hero-scroll" type="button" data-scroll="about-home">(Scroll)</button>
+      </div>
+    </section>
+    <section class="section" id="about-home"><div class="wrap">
+      <h2 class="sec-title">About me</h2>
+      <p class="lede">${esc(ABOUT)}</p>
+      <figure class="frame about-media"><video src="videos/clip-07-pyro.mp4" poster="images/poster-clip-07-pyro.jpg" muted loop playsinline preload="metadata" aria-label="Concert crowd with hands up as flame cannons fire" data-autoplay></video></figure>
+      <div class="more-link"><a href="#about">More About Me <span aria-hidden="true">↗</span></a></div>
+    </div></section>
+    ${cardSection('Instagram edits', edits.slice(0, 6), 'video', ['#videos-edits', 'All Edits'])}
+    ${cardSection('Films', VIDEOS.filter(v => v.seg === 'films'), 'video', ['#videos', 'All Videos'])}
+    ${cardSection('Client work', PHOTOS.filter(p => p.seg === 'client'), 'photo', ['#photos-client', 'All Client Work'])}
+    ${cardSection('Photography', PHOTOS.filter(p => p.seg === 'personal'), 'photo', ['#photos', 'All Photos'], true)}
+    <section class="section"><div class="wrap">
+      <h2 class="sec-title">My clients</h2>
+      <div class="clients">${CLIENTS.map(([name, to]) => `<a class="client" href="#${to}"><span>${esc(name)}</span></a>`).join('')}</div>
+    </div></section>`;
+  }
+
+  function ListPage(kind, filter) {
+    const all = kind === 'videos' ? VIDEOS : PHOTOS;
+    const segs = kind === 'videos'
+      ? [['all', 'All'], ['edits', 'Instagram Edits'], ['films', 'Films']]
+      : [['all', 'All'], ['client', 'Client Work'], ['personal', 'Personal']];
+    if (!segs.some(([k]) => k === filter)) filter = 'all';
+    const items = filter === 'all' ? all : all.filter(i => i.seg === filter);
+    const tabs = segs.map(([k, label]) => {
+      const n = k === 'all' ? all.length : all.filter(i => i.seg === k).length;
+      return `<a class="tab" href="#${kind}${k === 'all' ? '' : '-' + k}" aria-current="${k === filter}">${label}<b>${n}</b></a>`;
+    }).join('');
+    return `<section class="page-top"><div class="wrap">
+      <h1 class="page-title">All ${kind}</h1>
+      <nav class="tabs" aria-label="Filter ${kind}">${tabs}</nav>
+      <div class="grid">${items.map(i => card(i, kind === 'videos' ? 'video' : 'photo')).join('')}</div>
+    </div></section>`;
+  }
+
+  function VideoPage(slug) {
+    const v = VIDEOS.find(x => x.slug === slug);
+    if (!v) return ListPage('videos', 'all');
+    const media = v.media.map(m => (m.video ? videoFrame(m) : imageFrame(m))).join('');
+    const actions = [];
+    if (v.ig) actions.push(`<a class="btn-pill" href="${v.ig}" target="_blank" rel="noopener">Watch on Instagram ↗</a>`);
+    if (v.link) actions.push(`<a class="btn-pill" href="${v.link}" target="_blank" rel="noopener">${v.linkLabel} ↗</a>`);
+    return `<section class="page-top"><div class="wrap">
+      <h1 class="page-title">${esc(v.title)}</h1>
+      <p class="page-desc">${esc(v.desc)}</p>
+      ${details(v)}
+      <div class="media">${media}</div>
+      ${actions.length ? `<div class="page-actions">${actions.join('')}</div>` : ''}
+    </div></section>
+    ${moreSection('More videos', related(VIDEOS, v), 'video', '#videos', 'All Videos')}`;
+  }
+
+  function PhotoPage(slug) {
+    const p = PHOTOS.find(x => x.slug === slug);
+    if (!p) return ListPage('photos', 'all');
+    const rows = p.rows.map(([ar, ...imgs]) => {
+      const single = ar === 'natural';
+      const cls = imgs.length > 1 ? ` cols-${imgs.length}` : (single ? ' is-single' : '');
+      return `<div class="media-row${cls}">${imgs.map(m => imageFrame(m, single ? 'auto' : ar)).join('')}</div>`;
+    }).join('');
+    return `<section class="page-top"><div class="wrap">
+      <h1 class="page-title">${esc(p.title)}</h1>
+      <p class="page-desc">${esc(p.desc)}</p>
+      ${details(p)}
+      <div class="media">${rows}</div>
+      <div class="page-actions"><a class="btn-pill" href="${p.link}" target="_blank" rel="noopener">View on Behance ↗</a></div>
+    </div></section>
+    ${moreSection('More photos', related(PHOTOS, p), 'photo', '#photos', 'All Photos')}`;
+  }
+
+  function About() {
+    const stats = [['11', 'Behance projects'], ['8', 'Instagram edits'], ['5', 'Artists shot live'], ['1.1K+', 'Instagram followers']];
+    return `<section class="page-top"><div class="wrap">
+      <h1 class="page-title">Your vision, my lens</h1>
+    </div></section>
+    <section class="section"><div class="wrap">
+      <h2 class="sec-title">Hey, I'm Satwik</h2>
+      <p class="lede">${esc(ABOUT)}</p>
+      <figure class="frame about-photo"><img src="images/hero-fireworks.jpg" alt="Festival crowd with hands and phones raised as fireworks burst over the stage" loading="lazy"></figure>
+      <div class="stats">${stats.map(([n, l]) => `<div class="stat"><div><b>${n}</b><span>${l}</span></div></div>`).join('')}</div>
+    </div></section>
+    <section class="section"><div class="wrap">
+      <h2 class="sec-title">My services</h2>
+      <ol class="services">${SERVICES.map(([t, d], i) => `<li class="service"><i>${i + 1}.</i><h3>${esc(t)}</h3><p>${esc(d)}</p></li>`).join('')}</ol>
+    </div></section>`;
+  }
+
+  function Contact() {
+    return `<section class="page-top"><div class="wrap">
+      <p class="eyebrow-display">I'm just a click away</p>
+      <h1 class="page-title">Let's connect</h1>
+      <div class="contact-pills">
+        <a class="pill" href="${BEHANCE}" target="_blank" rel="noopener">Hire me on Behance ↗</a>
+        <a class="pill" href="${INSTAGRAM}" target="_blank" rel="noopener">DM on Instagram ↗</a>
+        <a class="pill" href="${LINKEDIN}" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <div class="form-card">
+        <form id="inquiry" novalidate>
+          <h2>Project inquiry</h2>
+          <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" placeholder="Your name" required></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
+          <div class="field"><label for="f-details">Project details</label><textarea id="f-details" name="details" placeholder="A live show, a brand shoot, a reel…" required></textarea></div>
+          <div><button class="btn-pill" type="submit">Copy my inquiry</button></div>
+          <p class="form-note">This page can't send email, so the button copies your message for you to paste into a Behance message or an Instagram DM.</p>
+          <div class="form-done" id="form-done" hidden>
+            <p id="form-status" role="status"></p>
+            <textarea id="f-message" readonly aria-label="Your inquiry"></textarea>
+            <div class="row"><a class="pill" href="${BEHANCE}" target="_blank" rel="noopener">Open Behance ↗</a><a class="pill" href="${INSTAGRAM}" target="_blank" rel="noopener">Open Instagram ↗</a></div>
+          </div>
+        </form>
+      </div>
+    </div></section>`;
+  }
+
+  // ---------- Video previews and sound ----------
+  // The video under the cursor plays with sound. Browsers only allow sound once the visitor has
+  // clicked, tapped or pressed a key on the page, so until then videos play muted and the Sound
+  // button in the nav asks for that click. Card previews share a few long-lived <video> elements:
+  // Safari unlocks sound one element at a time, so reusing them keeps sound working on every page.
+  const VOLUME = 1;
+  const soundBtn = document.getElementById('sound-btn');
+  const soundLabel = document.getElementById('sound-label');
+  const fades = new WeakMap();
+  const userControlled = new WeakSet();   // videos whose own controls the visitor has used
+  let soundOn = true;
+  try { soundOn = localStorage.getItem('portfolio-sound') !== 'off'; } catch (err) { /* sound stays on */ }
+  let soundAllowed = Boolean(navigator.userActivation && navigator.userActivation.hasBeenActive);
+
+  function renderSound() {
+    const on = soundOn && soundAllowed;
+    soundBtn.setAttribute('aria-pressed', String(on));
+    soundLabel.textContent = on ? 'Sound on' : soundOn ? 'Click for sound' : 'Sound off';
+    renderLive();
+  }
+  function renderLive() {
+    const audible = [...document.querySelectorAll('video')].some(v => !v.paused && !v.muted);
+    soundBtn.classList.toggle('is-live', audible && soundOn && soundAllowed);
+  }
+  function soundWorks() {
+    if (soundAllowed) return;
+    soundAllowed = true;
+    renderSound();
+  }
+  function soundBlocked() {
+    soundAllowed = false;
+    renderSound();
+    soundBtn.classList.remove('is-asking');
+    void soundBtn.offsetWidth;   // restart the pulse
+    soundBtn.classList.add('is-asking');
+  }
+
+  // Short volume ramps, so sound eases in and out instead of cutting. A timer rather than animation
+  // frames, which stop while the page is hidden and would leave a fading video playing.
+  const stopFade = v => clearInterval(fades.get(v));
+  function fade(v, to, ms, done) {
+    stopFade(v);
+    const from = v.volume;
+    const start = performance.now();
+    fades.set(v, setInterval(() => {
+      const k = Math.min(1, (performance.now() - start) / ms);
+      v.volume = from + (to - from) * k;
+      if (k < 1) return;
+      stopFade(v);
+      if (done) done();
+    }, 16));
+  }
+  function hush(v) {
+    if (!v.muted) fade(v, 0, 160, () => { v.muted = true; v.volume = VOLUME; });
+  }
+
+  // Starts a video, with sound if asked. When the browser refuses sound, it plays muted instead.
+  function play(v, withSound) {
+    stopFade(v);
+    v.muted = !withSound;
+    v.volume = withSound ? 0.05 : VOLUME;
+    return v.play().then(() => {
+      if (withSound) { soundWorks(); fade(v, VOLUME, 220); }
+    }, err => {
+      if (!withSound || err.name !== 'NotAllowedError') throw err;
+      soundBlocked();
+      v.muted = true;
+      v.volume = VOLUME;
+      return v.play();
+    });
+  }
+
+  const previews = [];
+  function addPreview() {
+    const video = document.createElement('video');
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.setAttribute('aria-hidden', 'true');
+    const p = { video, card: null, src: '', left: 0 };
+    // Also catches playback the browser resumes by itself, e.g. after the tab was in the background
+    video.addEventListener('playing', () => { if (p.card) p.card.classList.add('is-playing'); });
+    previews.push(p);
+    return p;
+  }
+  for (let i = 0; i < 3; i++) addPreview();
+
+  // Moves a preview player into the card, reusing one that already holds its clip
+  function previewFor(card) {
+    const mine = previews.find(p => p.card === card);
+    if (mine) return mine;
+    const src = card.dataset.preview;
+    const idle = previews.filter(p => !p.card).sort((a, b) => a.left - b.left);
+    const p = idle.find(x => x.src === src) || idle[0] || (previews.length < 6 ? addPreview() : previews[0]);
+    if (p.card) stopPreview(p.card);
+    if (p.src !== src) {
+      p.src = src;
+      p.video.src = src;
+    } else if (performance.now() - p.left > 1500) {
+      p.video.currentTime = 0;   // a fresh hover starts from the top
+    }
+    p.card = card;
+    const img = card.querySelector('.card-media img');
+    p.video.style.objectPosition = img.style.objectPosition;
+    img.after(p.video);
+    return p;
+  }
+  function startPreview(card, withSound) {
+    const p = previewFor(card);
+    play(p.video, withSound && soundOn).then(() => {
+      if (p.card === card) card.classList.add('is-playing');
+    }).catch(() => {});
+  }
+  function stopPreview(card) {
+    card.classList.remove('is-playing');
+    const p = previews.find(x => x.card === card);
+    if (!p) return;
+    p.card = null;
+    p.left = performance.now();
+    fade(p.video, 0, 160, () => { if (!p.card) p.video.pause(); });
+  }
+  function stopAllPreviews() {
+    previews.forEach(p => {
+      if (p.card) p.card.classList.remove('is-playing');
+      p.card = null;
+      p.left = performance.now();
+      stopFade(p.video);
+      p.video.pause();
+    });
+  }
+
+  // Videos on a page play muted while in view; the one under the cursor gets the sound
+  function pageVideoSound(v, hovering) {
+    if (userControlled.has(v)) return;
+    if (!hovering || !soundOn) { hush(v); return; }
+    if (v.paused) return;   // it starts with sound if it begins playing under the cursor
+    if (!soundAllowed) { soundBlocked(); return; }
+    if (v.muted) {
+      stopFade(v);
+      v.volume = 0.05;
+      v.muted = false;
+      if (v.paused) {   // the browser paused it rather than play sound
+        v.muted = true;
+        v.volume = VOLUME;
+        v.play().catch(() => {});
+        soundBlocked();
+        return;
+      }
+    }
+    fade(v, VOLUME, 220);
+  }
+
+  const inView = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      const el = e.target;
+      if (el.tagName !== 'VIDEO') {   // a card preview on a touch screen, always muted
+        if (e.isIntersecting) startPreview(el, false); else stopPreview(el);
+      } else if (!e.isIntersecting) {
+        el.pause();
+      } else if (userControlled.has(el)) {
+        el.play().catch(() => {});
+      } else {
+        play(el, canHover && soundOn && soundAllowed && el.matches(':hover')).catch(() => {});
+      }
+    });
+  }, { threshold: 0.55 }) : null;
+
+  // A click, tap or key press lets the browser play sound. Safari also wants play() called on each
+  // video during that gesture, so nudge the preview players and anything already playing.
+  function allowSound(e) {
+    if (e.type === 'keydown' && (e.key === 'Escape' || e.metaKey || e.ctrlKey || e.altKey)) return;
+    if (!soundAllowed) {
+      soundAllowed = true;
+      if (!soundBtn.contains(e.target)) renderSound();   // the button reads its old state first
+    }
+    previews.forEach(({ video }) => {
+      const wasPaused = video.paused;
+      video.play().catch(() => {});
+      if (wasPaused) video.pause();
+    });
+    app.querySelectorAll('video').forEach(v => { if (!v.paused) v.play().catch(() => {}); });
+  }
+  ['click', 'keydown', 'touchend'].forEach(type => document.addEventListener(type, allowSound, true));
+
+  soundBtn.addEventListener('click', () => {
+    soundOn = soundBtn.getAttribute('aria-pressed') !== 'true';
+    try { localStorage.setItem('portfolio-sound', soundOn ? 'on' : 'off'); } catch (err) { /* not remembered */ }
+    if (!soundOn) document.querySelectorAll('video').forEach(v => { if (!userControlled.has(v)) hush(v); });
+    renderSound();
+  });
+  ['play', 'pause', 'volumechange'].forEach(type => document.addEventListener(type, renderLive, true));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) return;
+    stopAllPreviews();
+    app.querySelectorAll('video').forEach(v => {
+      if (userControlled.has(v)) return;
+      stopFade(v);
+      v.muted = true;
+      v.volume = VOLUME;
+    });
+  });
+  renderSound();
+
+  // ---------- Behaviour wired after each render ----------
+  function wire() {
+    app.querySelectorAll('.card[data-preview]').forEach(c => {
+      if (canHover) {
+        c.addEventListener('pointerenter', e => startPreview(c, e.pointerType !== 'touch'));
+        c.addEventListener('pointerleave', () => stopPreview(c));
+        c.addEventListener('focus', () => { if (!previews.some(p => p.card === c)) startPreview(c, false); });
+        c.addEventListener('blur', () => stopPreview(c));
+      } else if (!reduceMotion && inView) {
+        inView.observe(c);
+      }
+    });
+    app.querySelectorAll('video[data-autoplay]').forEach(v => {
+      if (!reduceMotion && inView) inView.observe(v);
+      if (!canHover) return;
+      v.addEventListener('pointerenter', () => pageVideoSound(v, true));
+      v.addEventListener('pointerleave', () => pageVideoSound(v, false));
+      if (v.controls) ['pointerdown', 'keydown'].forEach(type => v.addEventListener(type, () => userControlled.add(v)));
+    });
+    if (!reduceMotion) {
+      const hero = app.querySelector('[data-hero]');
+      if (hero) hero.play().catch(() => {});
+    }
+    const scrollBtn = app.querySelector('[data-scroll]');
+    if (scrollBtn) scrollBtn.addEventListener('click', () => {
+      document.getElementById(scrollBtn.dataset.scroll).scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+    const form = document.getElementById('inquiry');
+    if (form) form.addEventListener('submit', onInquiry);
+  }
+
+  function onInquiry(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (!form.reportValidity()) return;
+    const d = new FormData(form);
+    const text = `Hi Satwik,\n\n${String(d.get('details')).trim()}\n\n${String(d.get('name')).trim()} · ${String(d.get('email')).trim()}`;
+    const done = document.getElementById('form-done');
+    const status = document.getElementById('form-status');
+    const box = document.getElementById('f-message');
+    box.value = text;
+    done.hidden = false;
+    const fallback = () => {
+      status.textContent = 'Select the message below, copy it, then paste it into a Behance message or an Instagram DM.';
+      box.focus();
+      box.select();
+    };
+    try {
+      navigator.clipboard.writeText(text)
+        .then(() => { status.textContent = 'Copied. Paste it into a Behance message or an Instagram DM:'; })
+        .catch(fallback);
+    } catch (err) { fallback(); }
+  }
+
+  // ---------- Router ----------
+  const nav = document.getElementById('nav');
+  const menuBtn = document.getElementById('menu-btn');
+  const scrollMemory = {};
+  let currentKey = null;
+  let jumpToTop = true;
+
+  function resolve(key) {
+    if (key.startsWith('v-')) return { html: VideoPage(key.slice(2)), section: 'videos' };
+    if (key.startsWith('p-')) return { html: PhotoPage(key.slice(2)), section: 'photos' };
+    if (key === 'videos' || key.startsWith('videos-')) return { html: ListPage('videos', key.split('-')[1] || 'all'), section: 'videos' };
+    if (key === 'photos' || key.startsWith('photos-')) return { html: ListPage('photos', key.split('-')[1] || 'all'), section: 'photos' };
+    if (key === 'about') return { html: About(), section: 'about' };
+    if (key === 'contact') return { html: Contact(), section: 'contact' };
+    return { html: Home(), section: 'home' };
+  }
+
+  function render() {
+    const key = decodeURIComponent(location.hash.slice(1)) || 'home';
+    if (currentKey !== null) scrollMemory[currentKey] = window.scrollY;
+    if (inView) inView.disconnect();
+    stopAllPreviews();
+    const { html, section } = resolve(key);
+    app.innerHTML = html;
+    currentKey = key;
+    document.querySelectorAll('[data-nav]').forEach(a => {
+      if (a.dataset.nav === section) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    setMenu(false);
+    wire();
+    renderLive();
+    replayTalk();
+    window.scrollTo({ top: jumpToTop ? 0 : (scrollMemory[key] || 0), behavior: 'instant' });
+    jumpToTop = false;
+  }
+
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    if (a.getAttribute('href') === location.hash || (a.getAttribute('href') === '#home' && !location.hash)) {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      setMenu(false);
+      return;
+    }
+    jumpToTop = true;
+  });
+  window.addEventListener('hashchange', render);
+
+  function setMenu(open) {
+    nav.classList.toggle('is-open', open);
+    document.documentElement.classList.toggle('menu-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // LET'S TALK letters rise when the card comes into view (they stay visible without it)
+  const talk = document.getElementById('talk-title');
+  const talkWatcher = 'IntersectionObserver' in window && !reduceMotion ? new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { talk.classList.add('play'); talkWatcher.unobserve(talk); } });
+  }, { threshold: 0.4 }) : null;
+  function replayTalk() {
+    if (!talkWatcher) return;
+    talk.classList.remove('play');
+    talkWatcher.observe(talk);
+  }
+
+  // Local time in Ahmedabad
+  const lt = document.getElementById('lt');
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+    const tick = () => { lt.textContent = `${fmt.format(new Date())} IST`; };
+    tick();
+    setInterval(tick, 30000);
+  } catch (err) { /* keep the static IST label */ }
+
+  render();
+  onScroll();
+
+  // Opening intro: type the first name over the hero, then hand over to the full name
+  const root = document.documentElement;
+  if (root.classList.contains('intro-run')) {
+    setTimeout(() => { root.classList.remove('intro-run'); root.classList.add('intro-out'); }, 1150);
+    setTimeout(() => { root.classList.remove('intro-out'); document.getElementById('intro').remove(); }, 1900);
+  }
+})();
+</script>
+</body>
+</html>
